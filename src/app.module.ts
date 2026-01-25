@@ -7,11 +7,11 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),PrismaModule, AuthModule, UserModule],
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: '.env',
+  }), PrismaModule, AuthModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
