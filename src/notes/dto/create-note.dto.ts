@@ -3,8 +3,9 @@ import { IsNotEmpty, IsString } from "class-validator"
 export class CreateNoteDto {
     @IsNotEmpty()
     @IsString()
-    title: String
+    title: string
 
     @IsNotEmpty()
-    content: String
+    @IsString()
+    content: string
 }
