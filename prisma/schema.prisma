@@ -9,10 +9,27 @@ datasource db {
 }
 
 model User {
-  id         String      @id @default(uuid())
-  name       String
-  email      String   @unique
-  password   String
-  created_at  DateTime @default(now())
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  note Note[]
+
+  created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model Note {
+  id      String @id @default(uuid())
+  title   String
+  content String
+
+  UserId String
+  user   User   @relation(fields: [UserId], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+
+  @@index([UserId])
 }
