@@ -1,10 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name)
   constructor(private readonly userService: UserService) { }
 
   async create(createAuthDto: CreateAuthDto) {
@@ -16,8 +17,10 @@ export class AuthService {
     if (existingUser) {
       throw new ConflictException('Email already taken');
     }
-    const createUser = await this.userService.createUser(createAuthDto)
-    return { message: "User created successfully.", data: createUser }
+    const newUser = await this.userService.createUser(createAuthDto);
+
+    this.logger.log(`New User has been created ${newUser.id}`)
+    return { message: "User created successfully.", data: newUser }
   }
 
   findAll() {
