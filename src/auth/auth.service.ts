@@ -57,6 +57,11 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload);
 
+    // create a refresh token (longer expiry than access token)
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+
     const { password: _, ...safeUser } = user;
 
     return {
@@ -64,7 +69,36 @@ export class AuthService {
       data: {
         user: safeUser,
         accessToken,
+        refreshToken,
       },
     };
+  }
+
+  async refresh(refreshToken: string) {
+    try {
+      const decoded: any = await this.jwtService.verifyAsync(refreshToken);
+
+      // ensure user still exists
+      const user = await this.userService.getUserByEmail(decoded.email);
+      if (!user) {
+        throw new UnauthorizedException('Invalid refresh token.');
+      }
+
+      const payload = {
+        sub: decoded.sub,
+        email: decoded.email,
+      };
+
+      const accessToken = await this.jwtService.signAsync(payload);
+
+      return {
+        message: 'Token refreshed.',
+        data: {
+          accessToken,
+        },
+      };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh token.');
+    }
   }
 }
